@@ -4,18 +4,17 @@ int page = 0;
 static void launchScreen(WINDOW *win);
 static void initScreen();
 
+int l, m, r;
+
 void screen() {
     initScreen();
-    timeScreen();
     menuScreen();
     endwin();        // ncurses 종료
 }
 
 static void initScreen() {
     initscr();            // ncurses 초기화
-    cbreak();             // 라인 버퍼링을 비활성화, 즉시 입력을 받을 수 있게 함
-    noecho();             // 입력된 문자를 화면에 표시하지 않음
-    curs_set(FALSE);      // 커서를 보이지 않게 함
+    disabledInput();      // 입력 비활성화
 
     /*  시작 화면 */
     // int startx, starty, width, height;
@@ -57,26 +56,28 @@ static void launchScreen(WINDOW *win) {
     }
 }
 
-void phoneBookScreen(WINDOW **pb_win) {
+void phoneBookScreen(WINDOW *pb_win) {
+    werase(pb_win);
     t_data *head = phoneBook;
     int width, height, idx = 3;
 
-    getmaxyx(stdscr, height, width);
-    width /= 2;
-    height -= 5;
-    if (page < 0)
-        page = lstCount(phoneBook) / (height - 2);
-    else if (page * (height - 2) > lstCount(phoneBook))
-        page = 0;
-    for (int i = 0; i < page * (height - 2) - 3 * page; i++)
+    getmaxyx(pb_win, height, width);
+    calPage();
+    for (int i = 0; i < page * l; i++)
         head = head->next;
-    *pb_win = newwin(height, width, 1, 1); // 보조 창 생성
-    box(*pb_win, 0, 0); // 보조 창 테두리 그리기
-    mvwprintw(*pb_win, 1, (width - strlen("Contact List")) / 2, "Contact List");
+    box(pb_win, 0, 0); // 보조 창 테두리 그리기
+    mvwprintw(pb_win, 1, (width - strlen("Contact List")) / 2, "Contact List");
     while (head && idx < height - 2) {
-        mvwprintw(*pb_win, idx++, 1, "Name: %s Phone: %s", head->name, head->phone);
+        mvwprintw(pb_win, idx++, 1, "Name: %s Phone: %s", head->name, head->phone);
         head = head->next;
     }
-    mvwprintw(*pb_win, height - 2, width / 2 - 3, "<%dpage>", page + 1);
-    wrefresh(*pb_win);
+    mvwprintw(pb_win, height - 2, width / 2 - 3, "<%dpage>", page + 1);
+    wrefresh(pb_win);
+}
+
+void calPage() {
+    if (page < 0) // 페이지가 0보다 작으면
+        page = m;   // 페이지를 마지막 페이지로 설정
+    else if (page > m) //페이지가 마지막 페이지보다 크면
+        page = 0;   // 페이지를 0으로 설정
 }

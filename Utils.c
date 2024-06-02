@@ -21,13 +21,13 @@ int lstCount(t_data *node) {
     return cnt;
 }
 
-void lstDelete(t_data **node, t_data *del) {
-    t_data *prev = *node;
-    t_data *temp = *node;
+void lstDelete(t_data *del) {
+    t_data *prev = phoneBook;
+    t_data *temp = phoneBook;
 
     while (temp) {
         if (prev == del) {
-            *node = del->next;
+            phoneBook = del->next;
             del->next = NULL;
             return ;
         } else if (temp == del) {
@@ -40,24 +40,13 @@ void lstDelete(t_data **node, t_data *del) {
     }
 }
 
-void lstClear(t_data *node) {
+void lstClear() {
     t_data *temp;
 
-    while (node) {
-        temp = node;
-        node = node->next;
+    while (phoneBook) {
+        temp = phoneBook;
+        phoneBook = phoneBook->next;
         free(temp);
-    }
-}
-
-void lstPrint(t_data *node) {
-    while (node) {
-        write(1, node->name, strlen(node->name)); write(1, ":", 1);
-        write(1, node->phone, strlen(node->phone)); write(1, ":", 1);
-        write(1, node->memo, strlen(node->memo));
-        node = node->next;
-        if (node) // 다음 연락처가 존재하는 경우에만 줄바꿈 문자를 붙임
-            write(1, "\n", 1);
     }
 }
 
@@ -84,4 +73,23 @@ t_data *makeContact(char **lines) {
         temp->memo[0] = '\0';
     temp->next = NULL;
     return temp;
+}
+
+void disabledInput() {
+    cbreak();             // 라인 버퍼링을 비활성화, 즉시 입력을 받을 수 있게 함
+    noecho();             // 입력된 문자를 화면에 표시하지 않음
+    curs_set(FALSE);      // 커서를 보이지 않게 함
+}
+
+void abledInput() {
+    nocbreak();            // 라인 버퍼링 활성화
+    echo();                // 입력된 문자를 화면에 표시
+    curs_set(TRUE);        // 커서를 보이게 함
+}
+
+void eraseCursor(WINDOW *win, int y, int x, int length) {
+    wmove(win, y, x);
+    for (int i = 0; i < length; i++)
+        waddstr(win, " ");
+    wrefresh(win);
 }

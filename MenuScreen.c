@@ -3,7 +3,7 @@
 static void printMenu(WINDOW *menu_win, int highlight);
 static void printDescription(WINDOW *desc_win, int highlight);
 
-char *choices[] = {
+static char *choices[] = {
     "ADD",
     "SEARCH",
     "DELETE",
@@ -11,7 +11,7 @@ char *choices[] = {
     "EXIT",
 };
 
-char *descriptions[] = {
+static char *descriptions[] = {
     "Add a new Contact.",
     "Search for an Contacts at PhoneBook.",
     "Delete an Contacts at PhoneBook.",
@@ -19,25 +19,26 @@ char *descriptions[] = {
     "Exit the program."
 };
 
-int n_choices = sizeof(choices) / sizeof(char*);
+static int n_choices = sizeof(choices) / sizeof(char*);
 
 void menuScreen() {
-    WINDOW *menu_win;
-    WINDOW *desc_win;
-    WINDOW *pb_win;
+    WINDOW *menu_win = newwin(LINES / 2, COLS / 2 - 2, 1, COLS / 2 + 1);
+    WINDOW *desc_win = newwin(LINES / 2 - 5, COLS / 2 - 3, LINES / 2 + 1, COLS / 2 + 1);
+    WINDOW *pb_win = newwin(LINES - 5, COLS / 2, 1, 1);
     int highlight = 1;
     int choice = SELECT;
     int c;
 
-    menu_win = newwin(LINES / 2, COLS / 2 - 1, 1, COLS / 2 + 1);
-    desc_win = newwin(LINES / 2 - 5, COLS / 2 - 1, LINES / 2 + 1, COLS / 2 + 1);
-    keypad(menu_win, TRUE);
-    refresh();
+    l = getmaxy(pb_win) - 5;
+    m = lstCount(phoneBook) / l;
+    r = lstCount(phoneBook) % l;
 
-    printMenu(menu_win, highlight);
-    printDescription(desc_win, highlight);
-    phoneBookScreen(&pb_win);
+    keypad(menu_win, TRUE);
     while (choice == SELECT) {
+        printMenu(menu_win, highlight);
+        printDescription(desc_win, highlight);
+        phoneBookScreen(pb_win);
+        disabledInput();    // 입력 비활성화
         c = wgetch(menu_win);
         switch (c) {
             case KEY_UP:
@@ -65,6 +66,7 @@ void menuScreen() {
                 break;
         }
         if (choice != SELECT) {// 엔터키를 눌렀을 때 루프 종료
+            abledInput();       // 입력 활성화
             werase(menu_win);
             werase(desc_win);
             werase(pb_win);
@@ -73,18 +75,14 @@ void menuScreen() {
             wrefresh(pb_win);
             choice = commandScreen(choice);
         }
-        printMenu(menu_win, highlight);
-        printDescription(desc_win, highlight);
-        phoneBookScreen(&pb_win);
     }
 
     mvprintw(LINES - 2, 0, "You chose choice %d with choice string %s\n", choice, choices[choice - 1]);
     clrtoeol();
-    refresh();
-    getch();
 }
 
 static void printMenu(WINDOW *menu_win, int highlight) {
+    werase(menu_win); // 창을 지우기
     int x, y, i;
     x = 2; y = 1;
     box(menu_win, 0, 0);
