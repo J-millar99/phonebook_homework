@@ -1,34 +1,25 @@
-h:h:h
-h:j:j
-g:g:g
-f:f:f
-e:e:e
-dummyZ:phone NUM:
-dummyY:phone NUM:
-dummyX:phone NUM:
-dummyW:phone NUM:
-dummyV:phone NUM:
-dummyU:phone NUM:
-dummyT:phone NUM:
-dummyS:phone NUM:
-dummyR:phone NUM:
-dummyQ:phone NUM:
-dummyP:phone NUM:
-dummyO:phone NUM:
-dummyN:phone NUM:
-dummyM:phone NUM:
-dummyL:phone NUM:
-dummyJ:phone NUM:
-dummyI:phone NUM:
-dummyH:phone NUM:
-dummyG:phone NUM:
-dummyF:phone NUM:
-dummyE:phone NUM:
-dummyD:phone NUM:
-dummyC:phone NUM:
-dummyB:phone NUM:
-dummyA:phone NUM:
-d:d:d
-c:c:c
-b:b:b
-a:a:a
+abcdef:00012312123123:456
+abc:001:456
+abc:002:456
+abc:003:456
+abc:004:456
+abc:005:456
+abc:006:456
+abc:007:456
+abc:008:456
+abc:009:456
+abc:010:456
+abc:011:456
+abc:012:456
+abc:013:456
+abc:014:456
+abc:015:456
+abc:016:456
+abc:017:456
+abc:018:456
+abc:019:456
+abc:020:456
+abc:021:456
+abc:022:456
+abc:023:456
+123:123:123

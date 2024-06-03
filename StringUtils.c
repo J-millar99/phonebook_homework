@@ -46,13 +46,11 @@ char *my_strtrim(char *str) {
     if (!*str) // 공백 문자만 있었다면 빈 문자열 반환
         return strdup("");
 
-    // 끝 포인터 설정
-    char *end = str + strlen(str) - 1;
+    char *end = str + strlen(str) - 1;	// 문자열 끝 지점 계산
     while (end > str && isspace(*end))
         end--; // 뒤에서부터 공백 문자를 건너 앞으로 옮김
 
-    // 새로운 문자열 길이 계산
-    size_t len = end - str + 1;
+    size_t len = end - str + 1;	    // 새로운 문자열 길이 계산
 
     // 결과 문자열 할당 및 복사
     char* trimmed_str = (char*)malloc(len + 1);

@@ -1,34 +1,37 @@
 #include "tel.h"
 
-int page = 0;
-static void launchScreen(WINDOW *win);
-static void initScreen();
+int page = 0;                           // 연락처 preview의 page를 표시할 변수
+static void initScreen();               // 화면 초기화 함수
+static void loadingScreen();            // 로딩창을 표현할 함수1
+static void launchScreen(WINDOW *win);  // 로딩창을 표현할 함수2
 
-int l, m, r;
+int l, m;    // 한 페이지에 표시할 연락처 개수, 페이지 수
 
 void screen() {
-    initScreen();
-    menuScreen();
-    endwin();        // ncurses 종료
+    initScreen();   // 초기 nucurse 설정
+    menuScreen();   // menuScreen부터 시작 
+    endwin();       // ncurses 종료
 }
 
 static void initScreen() {
-    initscr();            // ncurses 초기화
-    disabledInput();      // 입력 비활성화
+    initscr();              // ncurses 초기화
+    disabledInput();        // 입력 비활성화
+    // loadingScreen();        // 로딩 창 표혐
+}
 
-    /*  시작 화면 */
-    // int startx, starty, width, height;
-    // height = 8;
-    // width = 60;
-    // starty = (LINES - height) / 2;  // 화면 중앙에 위치하도록 y 좌표 설정
-    // startx = (COLS - width) / 2;    // 화면 중앙에 위치하도록 x 좌표 설정
+static void loadingScreen() {
+    int startx, starty, width, height;
+    height = 8;
+    width = 60;
+    starty = (LINES - height) / 2;  // 화면 중앙에 위치하도록 y 좌표 설정
+    startx = (COLS - width) / 2;    // 화면 중앙에 위치하도록 x 좌표 설정
 
-    // WINDOW *win = newwin(height, width, starty, startx); // 보조 창 생성
-    // box(win, 0 , 0); // 보조 창 테두리 그리기
-    // launchScreen(win);  // 보조창 실행
-    // werase(win);
-    // wrefresh(win);
-    // delwin(win);     // 보조 창 삭제
+    WINDOW *win = newwin(height, width, starty, startx); // 보조 창 생성
+    box(win, 0 , 0);    // 보조 창 테두리 그리기
+    launchScreen(win);  // 보조창 실행
+    werase(win);        // 보조 창 지우기
+    wrefresh(win);      // 보조 창 갱신 
+    delwin(win);        // 보조 창 삭제  
 }
 
 static void launchScreen(WINDOW *win) {
@@ -42,6 +45,7 @@ static void launchScreen(WINDOW *win) {
     mvwprintw(win, max_y / 2 - 2, (max_x - strlen(message) - strlen(version)) / 2 + strlen(message), " %s", version);
     wattroff(win, A_BOLD);  // BOLD 속성 끄기
 
+    // 로딩바 표현
     mvwprintw(win, max_y / 2, (max_x - 50) / 2, "[");
     mvwprintw(win, max_y / 2, (max_x + 50) / 2, "]");
     wrefresh(win);
@@ -52,32 +56,6 @@ static void launchScreen(WINDOW *win) {
         mvwprintw(win, max_y / 2 + 1, (max_x - 3) / 2, "%3d%%", i);
 
         wrefresh(win);
-        usleep(50000); // 0.05초 대기
+        usleep(50000); //  0.05초 대기
     }
-}
-
-void phoneBookScreen(WINDOW *pb_win) {
-    werase(pb_win);
-    t_data *head = phoneBook;
-    int width, height, idx = 3;
-
-    getmaxyx(pb_win, height, width);
-    calPage();
-    for (int i = 0; i < page * l; i++)
-        head = head->next;
-    box(pb_win, 0, 0); // 보조 창 테두리 그리기
-    mvwprintw(pb_win, 1, (width - strlen("Contact List")) / 2, "Contact List");
-    while (head && idx < height - 2) {
-        mvwprintw(pb_win, idx++, 1, "Name: %s Phone: %s", head->name, head->phone);
-        head = head->next;
-    }
-    mvwprintw(pb_win, height - 2, width / 2 - 3, "<%dpage>", page + 1);
-    wrefresh(pb_win);
-}
-
-void calPage() {
-    if (page < 0) // 페이지가 0보다 작으면
-        page = m;   // 페이지를 마지막 페이지로 설정
-    else if (page > m) //페이지가 마지막 페이지보다 크면
-        page = 0;   // 페이지를 0으로 설정
 }
