@@ -58,3 +58,14 @@ char *my_strtrim(char *str) {
     trimmed_str[len] = '\0';
     return trimmed_str;
 }
+
+// 전화번호가 유효한지 검사하는 함수
+int isValidPhone(const char *str) {
+    while (*str) {
+        if (!isdigit(*str) && *str != ' ') {
+            return 0; // 문자열에 숫자나 공백이 아닌 문자가 있음
+        }
+        str++;
+    }
+    return 1; // 문자열이 유효한 전화번호 형식임
+}

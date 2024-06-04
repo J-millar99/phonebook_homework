@@ -5,6 +5,7 @@ static void pageScreen(WINDOW *pbWin, int highlight);  // 페이지 출력
 static void delContact(int idx);    // 연락처 삭제
 static void yesOrNo(WINDOW *dcwin, int highlight);  // 삭제 여부
 static void deleteContactScreen(int idx);  // 연락처 삭제 화면
+static void showDetail(WINDOW *detailWin, int idx);  // 상세 정보 출력
 
 static char *decision[] = { // YES, NO
     "YES",
@@ -22,6 +23,7 @@ static char *menuDel[] = { // 설명
 void deleteScreen() {
     WINDOW *delWin = newwin(LINES / 2, COLS / 2 - 2, 1, COLS / 2 + 1);
     WINDOW *pbWin = newwin(LINES - 2, COLS / 2 - 2, 1, 1);
+    WINDOW *detailWin = newwin(LINES / 2 - 2, COLS / 2 - 2, LINES / 2 + 1, COLS / 2 + 1);
     int choice = SELECT;
     int highlight = 1;
     int c;
@@ -31,6 +33,7 @@ void deleteScreen() {
         keypad(pbWin, TRUE);   // 키보드 입력을 받을 수 있도록
         calPage();  // 페이지 계산
         pageScreen(pbWin, highlight);  // 삭제할 연락처 페이지 출력
+        showDetail(detailWin, highlight - 1 + page * l);    // 상세 정보 출력
         disabledInput();    // 입력 비활성화
         c = wgetch(pbWin);
         switch (c) {
@@ -61,7 +64,9 @@ void deleteScreen() {
             deleteContactScreen((highlight - 1) + (page * l));  // 연락처 삭제 화면
         }
     }
-    werase(delWin); werase(pbWin); wrefresh(delWin); wrefresh(pbWin); delwin(delWin); delwin(pbWin);    // 창 지우기
+    werase(delWin); werase(pbWin); werase(detailWin);
+    wrefresh(delWin); wrefresh(pbWin); wrefresh(detailWin);
+    delwin(delWin); delwin(pbWin); delwin(detailWin);   // 창 지우기
 }
 
 // 설명 출력
@@ -78,9 +83,7 @@ static void pageScreen(WINDOW *pbWin, int highlight) {
     int width, height, idx = 3, i = 0;
 
     werase(pbWin);
-    getmaxyx(stdscr, height, width);
-    width /= 2;
-    height -= 5;
+    getmaxyx(pbWin, height, width);
     for (int i = 0; i < page * l; i++)
         head = head->next;
     box(pbWin, 0, 0); // 보조 창 테두리 그리기
@@ -91,10 +94,10 @@ static void pageScreen(WINDOW *pbWin, int highlight) {
         stringEmit(head, name, phone);
         if (highlight == i + 1) {
             wattron(pbWin, A_REVERSE);
-            mvwprintw(pbWin, idx++, 1, "N: %s P: %s", name, phone);
+            mvwprintw(pbWin, idx++, 2, "N: %s P: %s", name, phone);
             wattroff(pbWin, A_REVERSE);
         } else {
-            mvwprintw(pbWin, idx++, 1, "N: %s P: %s", name, phone);
+            mvwprintw(pbWin, idx++, 2, "N: %s P: %s", name, phone);
         }
         i++;
         head = head->next;
@@ -105,7 +108,7 @@ static void pageScreen(WINDOW *pbWin, int highlight) {
 
 // 연락처 삭제 화면
 static void deleteContactScreen(int idx) {
-    WINDOW *dcwin = newwin(LINES / 2 - 4, COLS / 2 - 2, LINES / 2 + 1, COLS / 2 + 1);
+    WINDOW *dcwin = newwin(LINES / 2 - 2, COLS / 2 - 2, LINES / 2 + 1, COLS / 2 + 1);
     int choice = SELECT;
     int highlight = 1;
     int c;
@@ -169,4 +172,21 @@ static void yesOrNo(WINDOW *dcwin, int highlight) {
         wattroff(dcwin, A_REVERSE);
     }
     wrefresh(dcwin);
+}
+
+// 상세 정보 출력
+static void showDetail(WINDOW *detailWin, int idx) {
+    t_data *head = phoneBook;
+    int width, height, i = 0;
+
+    werase(detailWin);
+    getmaxyx(detailWin, height, width);
+    for (int i = 0; i < idx; i++)
+        head = head->next;
+    box(detailWin, 0, 0); // 보조 창 테두리 그리기
+    mvwprintw(detailWin, 1, (width - strlen("Detail")) / 2, "Detail");
+    mvwprintw(detailWin, 2, 2, "Name: %s", head->name);
+    mvwprintw(detailWin, 3, 2, "Phone: %s", head->phone);
+    mvwprintw(detailWin, 4, 2, "Memo: %s", head->memo);
+    wrefresh(detailWin);
 }

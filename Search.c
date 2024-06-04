@@ -16,8 +16,7 @@ static char *menu[] = { // 검색 메뉴
 
 void searchScreen() {
     int shX, shY; // 다음은 menuScreen 함수와 매우 유사합니다 (반복 부분은 주석 생략)
-    getmaxyx(stdscr, shY, shX);
-    WINDOW *shWin = newwin(shY, shX, 0, 0);
+    WINDOW *shWin = newwin(LINES - 2, COLS - 2, 1, 1);
     int highlight = 1;
     int choice = SELECT;
     int c;
@@ -104,9 +103,9 @@ static int searchPhone(WINDOW *shWin) {
     t_data *head = phoneBook;
     while (head) {
         if (!strcmp(head->phone, phone)) {  // 전화번호가 같은 연락처를 찾았다면
-            mvwprintw(shWin, 7, (shX - 6 - strlen(head->name)) / 2, "Name: %s", head->name);
-            mvwprintw(shWin, 8, (shX - 7 - strlen(head->phone)) / 2, "Phone: %s", head->phone);
-            mvwprintw(shWin, 9, (shX - 6 - strlen(head->memo)) / 2, "Memo: %s", head->memo);
+            mvwprintw(shWin, shY / 4 + 3, (shX - 6 - strlen(head->name)) / 4, "Name: %s", head->name);
+            mvwprintw(shWin, shY / 4 + 4, (shX - 7 - strlen(head->phone)) / 4, "Phone: %s", head->phone);
+            mvwprintw(shWin, shY / 4 + 5, (shX - 6 - strlen(head->memo)) / 4, "Memo: %s", head->memo);
             mvwprintw(shWin, shY - 4, (shX - strlen("Enter is quit")) / 2, "Enter is quit");
             break;
         }
@@ -138,15 +137,13 @@ static void printMenu(WINDOW *shWin, int highlight) {
 
 static void findNameResult(char *name) {
     t_data *tphoneBook = nameContactList(name); // 찾는 이름으로만 된 리스트 새롭게 생성하여 반환
-    int y, x;
-    getmaxyx(stdscr, y, x);
-    WINDOW *retWin = newwin(y, x, 0, 0);
+    WINDOW *retWin = newwin(LINES - 2, COLS - 2, 1, 1);
     int highlight = 1;                         // 현재 보고있는 메뉴
     int choice = SELECT;                       // 선택된 메뉴 초기값: SELECT
     int c;
 
-    tl = getmaxy(retWin) - 5;
-    tm = lstCount(tphoneBook) / tl;
+    tl = getmaxy(retWin) - 5;                   // 한 페이지당 출력할 행 계산
+    tm = lstCount(tphoneBook) / tl;             // 총 페이지 계산
     disabledInput();
     keypad(retWin, TRUE);                      // 키보드 입력을 받을 수 있도록
     while (choice == SELECT) {
@@ -172,7 +169,7 @@ static void findNameResult(char *name) {
 static void nameBookScreen(WINDOW *retWin, t_data *tphoneBook) {
     werase(retWin);  // 창을 지우기
     t_data *head = tphoneBook;   // next로 건너뛰는 포인터 변수
-    int width, height, idx = 4; // 좌표 변수와 인덱스 변수
+    int width, height, idx = 3; // 좌표 변수와 인덱스 변수
 
     getmaxyx(retWin, height, width); // 창의 크기 저장
     calTPage();  // 현재 page를 계산하여 갱신
@@ -181,7 +178,7 @@ static void nameBookScreen(WINDOW *retWin, t_data *tphoneBook) {
     box(retWin, 0, 0); // 보조 창 테두리 그리기
     mvwprintw(retWin, 1, (width - strlen("Search Name List")) / 2, "Search Name List");  // 전화번호부 title
     mvwprintw(retWin, 2, (width - 11 - strlen(head->name)) / 2, "Searching: %s", head->name); 
-    while (head && idx < height - 2) {  // 3번째줄부터, 창 높이 - 2 까지 출력할 공간을 돌며 한줄 한줄 출력
+    while (head && idx < height - 2) {  // 4번째줄부터, 창 높이 - 1 까지 출력할 공간을 돌며 한줄 한줄 출력
         mvwprintw(retWin, idx++, 2, "Phone: %s, Memo: %s", head->phone, head->memo);
         head = head->next;
     }

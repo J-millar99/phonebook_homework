@@ -15,6 +15,8 @@ void saveContact(int fd) {
         }
         checkToken(line);           // 읽은 한 줄이 이름과 전화번호가 비어있지 않은지 확인합니다
         lines = split(line, ':');   // 구분자 ':'를 기준으로 문자열을 잘라
+        if (!isValidPhone(lines[1]))
+            errorExit("연락처의 전화번호가 올바르지 않습니다"); // 전화번호가 올바르지 않은 경우 에러처리
         tlines[0] = my_strtrim(lines[0]); tlines[1] = my_strtrim(lines[1]); tlines[2] = my_strtrim(lines[2]); // 각 필드에 보관
         tlines[3] = NULL;           // 문자배열의 끝을 표기 -> 메모리 해제의 끝을 알기 위함
         freeArr(lines); free(lines); free(line); // 사용한 문자열들을 해제
@@ -39,6 +41,8 @@ static void initPhoneBook(int fd) {
         }
         checkToken(line);
         lines = split(line, ':');
+        if (!isValidPhone(lines[1]))
+            errorExit("연락처의 전화번호가 올바르지 않습니다");
         free(line);
         tlines[0] = my_strtrim(lines[0]);
         tlines[1] = my_strtrim(lines[1]);

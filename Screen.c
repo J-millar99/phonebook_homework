@@ -16,7 +16,7 @@ void screen() {
 static void initScreen() {
     initscr();              // ncurses 초기화
     disabledInput();        // 입력 비활성화
-    // loadingScreen();        // 로딩 창 표혐
+    loadingScreen();        // 로딩 창 표혐
 }
 
 static void loadingScreen() {

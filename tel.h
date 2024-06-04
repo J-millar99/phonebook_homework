@@ -69,7 +69,7 @@ void    errorScreen(WINDOW *to, char *error);
 char    *my_substr(char const *str, unsigned int start, size_t len);
 char    *my_strjoin(char *s1, char *s2);
 char    *my_strtrim(char *str);
-
+int     isValidPhone(const char *str);
 //  Screen
 void    screen();
 void    menuScreen();
