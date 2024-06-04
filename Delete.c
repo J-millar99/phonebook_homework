@@ -61,7 +61,10 @@ void deleteScreen() {
         }
         if (choice != SELECT) { // 엔터키를 눌렀을 때 루프 종료
             keypad(pbWin, FALSE);
-            deleteContactScreen((highlight - 1) + (page * l));  // 연락처 삭제 화면
+            if (lstCount(phoneBook) == 0)    // 연락처가 없을 때
+                errorScreen(detailWin, "No contacts to delete."); // 에러 출력
+            else
+                deleteContactScreen((highlight - 1) + (page * l));  // 연락처 삭제 화면
         }
     }
     werase(delWin); werase(pbWin); werase(detailWin);
@@ -131,7 +134,7 @@ static void deleteContactScreen(int idx) {
             break;
         }
         if (choice != SELECT) {
-            if (choice == YES)
+            if (choice == YES && lstCount(phoneBook) != 0)  // YES를 선택했을 때
                 delContact(idx);    // 연락처 삭제
             werase(dcwin); wrefresh(dcwin); delwin(dcwin);
             break;
@@ -150,10 +153,6 @@ static void delContact(int idx) {   // 연락처 삭제
 
 // 삭제의 여부를 묻는 창 + 하이라이트 효과
 static void yesOrNo(WINDOW *dcwin, int highlight) {
-    if (lstCount(phoneBook) == 0) { // 연락처가 없을 때
-        errorScreen(dcwin, "No contacts to delete.");   // 에러 출력
-        return ;    // 종료
-    }
     int width, height;
     getmaxyx(dcwin, height, width);
     werase(dcwin);
@@ -180,6 +179,9 @@ static void showDetail(WINDOW *detailWin, int idx) {
     int width, height, i = 0;
 
     werase(detailWin);
+    if (lstCount(phoneBook) == 0) { // 연락처가 없을 때
+        return ;
+    }
     getmaxyx(detailWin, height, width);
     for (int i = 0; i < idx; i++)
         head = head->next;
