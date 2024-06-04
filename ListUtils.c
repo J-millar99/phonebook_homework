@@ -93,9 +93,9 @@ t_data *nameContactList(char *name) {
     while (head) {
         if (!strcmp(head->name, name)) {
             t_data *new_node = (t_data *)malloc(sizeof(t_data));
-            strcpy(new_node->name, head->name); // 새 노드에 데이터 복사
-            strcpy(new_node->phone, head->phone);   // 새 노드에 데이터 복사      
-            strcpy(new_node->memo, head->memo);     // 새 노드에 데이터 복사 
+            strncpy(new_node->name, head->name, NAME_LEN - 1); // 새 노드에 데이터 복사
+            strncpy(new_node->phone, head->phone, PHONE_LEN - 1);   // 새 노드에 데이터 복사      
+            strncpy(new_node->memo, head->memo, MEMO_LEN - 1);     // 새 노드에 데이터 복사 
             new_node->next = NULL;
 
             // 새 리스트에 새 노드를 추가
@@ -141,10 +141,10 @@ t_data *phoneContactList(char *phone) {
 }
 
 void stringEmit(t_data *node, char *name, char *phone) {
-    strncat(name, node->name, 8);
-    if (strlen(node->name) > 8)
+    strncat(name, node->name, 7);
+    if (strlen(node->name) > 7)
         strcat(name, "...");
-    strncat(phone, node->phone, 15);
-    if (strlen(node->phone) > 15)
+    strncat(phone, node->phone, 14);
+    if (strlen(node->phone) > 14)
         strcat(phone, "...");
 }

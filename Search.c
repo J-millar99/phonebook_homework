@@ -135,6 +135,7 @@ static void printMenu(WINDOW *shWin, int highlight) {
     wrefresh(shWin);
 }
 
+//problem
 static void findNameResult(char *name) {
     t_data *tphoneBook = nameContactList(name); // 찾는 이름으로만 된 리스트 새롭게 생성하여 반환
     WINDOW *retWin = newwin(LINES - 2, COLS - 2, 1, 1);
@@ -147,7 +148,7 @@ static void findNameResult(char *name) {
     disabledInput();
     keypad(retWin, TRUE);                      // 키보드 입력을 받을 수 있도록
     while (choice == SELECT) {
-        nameBookScreen(retWin, tphoneBook);
+        nameBookScreen(retWin, tphoneBook); //problem
         c = wgetch(retWin);                    // 메뉴 창에서 입력 받기
         switch (c) {
         case KEY_LEFT: // 왼쪽 방향키
@@ -170,14 +171,13 @@ static void nameBookScreen(WINDOW *retWin, t_data *tphoneBook) {
     werase(retWin);  // 창을 지우기
     t_data *head = tphoneBook;   // next로 건너뛰는 포인터 변수
     int width, height, idx = 3; // 좌표 변수와 인덱스 변수
-
     getmaxyx(retWin, height, width); // 창의 크기 저장
     calTPage();  // 현재 page를 계산하여 갱신
     for (int i = 0; i < tpage * tl; i++)  // 페이지를 넘겨 연결리스트에서 표시할 시작 노드를 구함
         head = head->next;
     box(retWin, 0, 0); // 보조 창 테두리 그리기
     mvwprintw(retWin, 1, (width - strlen("Search Name List")) / 2, "Search Name List");  // 전화번호부 title
-    mvwprintw(retWin, 2, (width - 11 - strlen(head->name)) / 2, "Searching: %s", head->name); 
+    mvwprintw(retWin, 2, (width - 11 - strlen(head->name)) / 2, "Searching: %s", head->name);
     while (head && idx < height - 2) {  // 4번째줄부터, 창 높이 - 1 까지 출력할 공간을 돌며 한줄 한줄 출력
         mvwprintw(retWin, idx++, 2, "Phone: %s, Memo: %s", head->phone, head->memo);
         head = head->next;

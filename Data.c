@@ -58,10 +58,10 @@ static void initPhoneBook(int fd) {
 t_data *makeContact(char **lines) {
     t_data *temp = (t_data *)malloc(sizeof(t_data)); // 구조체 1개 동적할당
     // 각각의 필드를 각각의 필드 길이의 맞게 복사한다
-    strncpy(temp->name, lines[0], NAME_LEN);        
-    strncpy(temp->phone, lines[1], PHONE_LEN);
+    strncpy(temp->name, lines[0], NAME_LEN - 1);        
+    strncpy(temp->phone, lines[1], PHONE_LEN - 1);
     if (lines[2]) // memo 필드는 존재할수도 없을수도 있기 때문에 분기점을 구분
-        strncpy(temp->memo, lines[2], MEMO_LEN);
+        strncpy(temp->memo, lines[2], MEMO_LEN - 1);
     else
         temp->memo[0] = '\0';
     temp->next = NULL;  // 새로운 노드의 끝을 표시
